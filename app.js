@@ -8,31 +8,6 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 
-const counts = async () => {
-  try {
-    const helis = await prisma.heliMinusOne.findMany({});
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const todayHelis = await prisma.heliMinusOne.count({
-      where: {
-        when: {
-          gte: today, // Start of today
-          lt: new Date(today.getTime() + 86400000), // Start of tomorrow
-        },
-      },
-    });
-
-    res
-      .status(200)
-      .send(`Helis fucked today: ${todayHelis}. Total: ${helis.length}`);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Failed to retrieve data");
-  }
-};
-
 // Sample route to create a user
 app.post("/heliminusone", async (req, res) => {
   console.log("Request for -1 received:", req.body);
@@ -93,6 +68,27 @@ app.get("/heliminusone", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Failed to retrieve data");
+  }
+});
+
+app.get("/heliminusone/stats", async (req, res) => {
+  try {
+    const stats = await prisma.heliMinusOne.groupBy({
+      by: ["who"],
+      _count: {
+        value: true,
+      },
+    });
+
+    const formattedStats = stats.map((stat) => ({
+      who: stat.who,
+      count: stat._count.value,
+    }));
+
+    res.status(200).json(formattedStats);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve stats" });
   }
 });
 
