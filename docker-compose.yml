@@ -1,0 +1,13 @@
+#docker-compose.yml
+
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "9888:9888"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=file:./dev.db
