@@ -25,26 +25,29 @@ app.post("/heliminusone", async (req, res) => {
   }
 });
 
-// Sample route to get all users and count how many today
 app.get("/heliminusone", async (req, res) => {
-  const allUsers = await prisma.heliMinusOne.findMany({
-    select: {
-      _count: true,
-    },
-  });
+  try {
+    const helis = await prisma.heliMinusOne.findMany({});
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const todayUsers = await prisma.heliMinusOne.count({
-    where: {
-      createdAt: {
-        gte: today,
+    const todayHelis = await prisma.heliMinusOne.count({
+      where: {
+        when: {
+          gte: today, // Start of today
+          lt: new Date(today.getTime() + 86400000), // Start of tomorrow
+        },
       },
-    },
-  });
+    });
 
-  res.json({ allUsers, todayUsers });
+    res
+      .status(200)
+      .send(`Helis fucked today: ${todayHelis}. Total: ${helis.length}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Failed to retrieve data");
+  }
 });
 
 const PORT = 9870;
