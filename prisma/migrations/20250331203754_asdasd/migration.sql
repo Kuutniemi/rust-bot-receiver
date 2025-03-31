@@ -1,0 +1,6 @@
+-- CreateTable
+CREATE TABLE "HeliMinusOne" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "who" TEXT,
+    "when" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
