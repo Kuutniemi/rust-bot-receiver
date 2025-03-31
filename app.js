@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 
 // Sample route to create a user
 app.post("/heliminusone", async (req, res) => {
+  console.log("Request for -1 received:", req.body);
   try {
     const newEntry = await prisma.heliMinusOne.create({
       data: {
