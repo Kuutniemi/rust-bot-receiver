@@ -5,7 +5,7 @@ services:
   app:
     build: .
     ports:
-      - "9888:9888"
+      - "9870:9870"
     volumes:
       - .:/app
       - /app/node_modules
